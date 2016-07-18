@@ -13,18 +13,7 @@ The SQL code creates T-SQL wrapper functions that call the functions in the CLR 
 
 ## Usage examples
 
-* `select dbo.RegexMatch( N'123-45-6749', N'^\d{3}-\d{2}-\d{4}`
-
-  Returns 1 in this case since the phone number pattern is matched
-
-* `select dbo.RegExReplace('Remove1All3Letters7','[a-zA-Z]','')` 
-
-  Returns 137 since all alpha characters where replaced with no characters
-
-* `select dbo.RegexSelectOne('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', 0)` 
-
-  Returns 123-45-6789 since first match was specifed. If last parameter was 1 then the second match (222-33-4444) would be returned.
-
-* `select dbo.RegexSelectAll('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', '|')` 
-
-  Returns 123-45-6749|222-33-4444 
+* `select dbo.RegexMatch( N'123-45-6749', N'^\d{3}-\d{2}-\d{4}` Returns 1 in this case since the phone number pattern is matched
+* `select dbo.RegExReplace('Remove1All3Letters7','[a-zA-Z]','')` Returns 137 since all alpha characters where replaced with no characters
+* `select dbo.RegexSelectOne('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', 0)` Returns 123-45-6789 since first match was specifed. If last parameter was 1 then the second match (222-33-4444) would be returned.
+* `select dbo.RegexSelectAll('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', '|')` Returns 123-45-6749|222-33-4444 
