@@ -22,12 +22,12 @@ public partial class UserDefinedFunctions
     }
 
     /// <summary>
-    /// 
+    /// In a specified input string, replaces strings that match a regular expression pattern with a specified replacement string.
     /// </summary>
-    /// <param name="expression"></param>
-    /// <param name="pattern"></param>
-    /// <param name="replace"></param>
-    /// <returns></returns>
+    /// <param name="expression">The string to search for a match. </param>
+    /// <param name="pattern">The regular expression pattern to match. </param>
+    /// <param name="replace">The replacement string.</param>
+    /// <returns>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged.</returns>
     [SqlFunction]
     public static SqlString RegexReplace(SqlString expression, SqlString pattern, SqlString replace)
     {
