@@ -26,3 +26,9 @@ select dbo.RegexSelectOne('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', 0)
 -- Returns 123-45-6749|222-33-4444 
 select dbo.RegexSelectAll('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', '|') 
 ```
+
+## Installation
+
+1. Build the `RegexFunctions` project in Visual Studio
+2. In SQL Server, add the `"RegexFunctions\bin\Release\RegexFunctions.dll"` file as a new assembly
+3. Run the `"SQL Server Objects\UserDefinedFunctions.sql"` script to add the SQL Server wrapper functions
