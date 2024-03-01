@@ -31,5 +31,6 @@ select dbo.RegexSelectAll('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', '|')
 ## Installation
 
 1. Build the `RegexFunctions` project in Visual Studio.
-2. In SQL Server, add the `"RegexFunctions\bin\Release\RegexFunctions.dll"` file as a new assembly.
-3. Run the `"SQL Server Objects\UserDefinedFunctions.sql"` script to add the SQL Server wrapper functions.
+2. In the build output folder, run the "generate-assembly-script.ps1" script which generates a "CreateAssembly.sql" file.
+3. In SQL Server, run the code in "SQL Server Objects\Configure SQL Server.sql". At the appropriate step, run the "CreateAssembly.sql" file.
+3. Run the "SQL Server Objects\Create UserDefinedFunctions.sql" script to add the SQL Server wrapper functions.
