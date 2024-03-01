@@ -1,11 +1,20 @@
--- Returns 1 in this case since the phone number pattern is matched
-SELECT dbo.RegexMatch( N'123-45-6749', N'^\d{3}-\d{2}-\d{4}' ) AS [1];
+-- Returns 1 since the pattern is matched.
+SELECT dbo.RegexMatch(N'123-456-7890', N'^\d{3}-\d{3}-\d{4}') AS [true];
 
--- Returns 137 since all alpha characters where replaced with no characters
-SELECT dbo.RegExReplace( 'Remove1All3Letters7', '[a-zA-Z]', '' ) AS [137];
+-- Returns 0 since the pattern is not matched.
+SELECT dbo.RegexMatch(N'123-45-6789', N'^\d{3}-\d{3}-\d{4}') AS [false];
 
--- Returns 123-45-6789 since first match was specifed. If last parameter was 1 then the second match (222-33-4444) would be returned.
-SELECT dbo.RegexSelectOne( '123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', 0 ) AS [123-45-6789];
+-- Returns N'137' since all alphabetic characters were replaced with an empty string.
+SELECT dbo.RegExReplace(N'Remove1All3Letters7', N'[a-zA-Z]', N'') AS [137];
 
--- Returns 123-45-6749|222-33-4444 
-SELECT dbo.RegexSelectAll( '123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', '|' ) AS [123-45-6749|222-33-4444];
+-- Returns N'123-456-7890' since first match was specified (matchIndex = 0).
+SELECT dbo.RegexSelectOne(N'123-456-7890___222-333-4444', N'\d{3}-\d{3}-\d{4}', 0) AS [123-456-7890];
+
+-- Returns N'222-333-4444' since second match was specified (matchIndex = 1).
+SELECT dbo.RegexSelectOne(N'123-456-7890___222-333-4444', N'\d{3}-\d{3}-\d{4}', 1) AS [222-333-4444];
+
+-- Returns N'123-456-7890|222-333-4444'.
+SELECT dbo.RegexSelectAll(N'123-456-7890___222-333-4444', N'\d{3}-\d{3}-\d{4}', N'|') AS [123-456-7890|222-333-4444];
+
+-- Returns N'7890...4444'.
+SELECT dbo.RegexSelectAll(N'123-456-7890___222-333-4444', N'\d{4}', N'...') AS [7890...4444];

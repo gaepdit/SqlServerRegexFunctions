@@ -1,6 +1,7 @@
 # Regular Expressions (Regex) Functions for SQL Server
 
-An implementation of .NET Regular Expressions for use in SQL Server. All C# code is from the [Just geeks blog](http://justgeeks.blogspot.com/2008/08/adding-regular-expressions-regex-to-sql.html). 
+An implementation of .NET Regular Expressions for use in SQL Server. All C# code is based on code from
+the [Just geeks blog](http://justgeeks.blogspot.com/2008/08/adding-regular-expressions-regex-to-sql.html).
 
 The SQL script creates T-SQL wrapper functions that call the functions in the CLR assembly.
 
@@ -29,6 +30,6 @@ select dbo.RegexSelectAll('123-45-6749xxx222-33-4444', '\d{3}-\d{2}-\d{4}', '|')
 
 ## Installation
 
-1. Build the `RegexFunctions` project in Visual Studio
-2. In SQL Server, add the `"RegexFunctions\bin\Release\RegexFunctions.dll"` file as a new assembly
-3. Run the `"SQL Server Objects\UserDefinedFunctions.sql"` script to add the SQL Server wrapper functions
+1. Build the `RegexFunctions` project in Visual Studio.
+2. In SQL Server, add the `"RegexFunctions\bin\Release\RegexFunctions.dll"` file as a new assembly.
+3. Run the `"SQL Server Objects\UserDefinedFunctions.sql"` script to add the SQL Server wrapper functions.
