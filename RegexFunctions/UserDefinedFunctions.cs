@@ -1,105 +1,92 @@
-﻿using System.Data.SqlTypes;
-using Microsoft.SqlServer.Server;
-using System.Text.RegularExpressions;
+﻿using Microsoft.SqlServer.Server;
+using System.Data.SqlTypes;
 using System.Text;
+using System.Text.RegularExpressions;
 
-public partial class UserDefinedFunctions
+// ReSharper disable UnusedMember.Global
+// ReSharper disable once UnusedType.Global
+public static class UserDefinedFunctions
 {
-
-    public static readonly RegexOptions Options = RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline;
+    private const RegexOptions Options = RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline;
 
     /// <summary>
     /// Indicates whether the regular expression finds a match in the input string.
     /// </summary>
     /// <param name="input">The string to search for a match.</param>
-    /// <param name="pattern">The regular expression pattern to match. </param>
+    /// <param name="pattern">The regular expression pattern to match.</param>
     /// <returns>true (1) if the regular expression finds a match; otherwise, false (0).</returns>
-    [SqlFunction]
-    public static SqlBoolean RegexMatch(SqlChars input, SqlString pattern)
-    {
-        Regex regex = new Regex(pattern.Value, Options);
-        return regex.IsMatch(new string(input.Value));
-    }
+    [SqlFunction(IsDeterministic = true)]
+    public static SqlBoolean RegexMatch(SqlChars input, SqlString pattern) =>
+        new Regex(pattern.Value, Options).IsMatch(new string(input.Value));
 
     /// <summary>
-    /// In a specified input string, replaces strings that match a regular expression pattern with a specified replacement string.
+    /// In a specified input string, replaces strings that match a regular expression pattern with a specified
+    /// replacement string.
     /// </summary>
-    /// <param name="expression">The string to search for a match. </param>
-    /// <param name="pattern">The regular expression pattern to match. </param>
+    /// <param name="expression">The string to search for a match.</param>
+    /// <param name="pattern">The regular expression pattern to match.</param>
     /// <param name="replace">The replacement string.</param>
-    /// <returns>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged.</returns>
-    [SqlFunction]
-    public static SqlString RegexReplace(SqlString expression, SqlString pattern, SqlString replace)
-    {
-        if (expression.IsNull || pattern.IsNull || replace.IsNull)
-            return SqlString.Null;
+    /// <returns>A new string that is identical to the input string, except that the replacement string takes
+    /// the place of each matched string. If the regular expression pattern is not matched in the current instance,
+    /// the method returns the current instance unchanged.</returns>
+    [SqlFunction(IsDeterministic = true)]
+    public static SqlString RegexReplace(SqlString expression, SqlString pattern, SqlString replace) =>
+        expression.IsNull || pattern.IsNull || replace.IsNull
+            ? SqlString.Null
+            : new SqlString(new Regex(pattern.ToString()).Replace(expression.ToString(), replace.ToString()));
 
-        Regex regex = new Regex(pattern.ToString());
-        return new SqlString(regex.Replace(expression.ToString(), replace.ToString()));
-    }
-    
     /// <summary>
-    /// Returns the matching string. Results are separated by the delimeter string
+    /// Returns the matching string. Results are separated by the delimiter string.
     /// </summary>
     /// <param name="input">The string to search for a match.</param>
-    /// <param name="pattern">The regular expression pattern to match. </param>
-    /// <param name="matchDelimiter">The delimeter string</param>
-    /// <returns>The matching strings separated by the delimeter string.</returns>
-    [SqlFunction]
+    /// <param name="pattern">The regular expression pattern to match.</param>
+    /// <param name="matchDelimiter">The delimiter string.</param>
+    /// <returns>The matching strings separated by the delimiter string.</returns>
+    [SqlFunction(IsDeterministic = true)]
     public static SqlString RegexSelectAll(SqlChars input, SqlString pattern, SqlString matchDelimiter)
     {
-        Regex regex = new Regex(pattern.Value, Options);
-        Match results = regex.Match(new string(input.Value));
+        var results = new Regex(pattern.Value, Options).Match(new string(input.Value));
+        var sb = new StringBuilder();
 
-        StringBuilder sb = new StringBuilder();
         while (results.Success)
         {
             sb.Append(results.Value);
-
             results = results.NextMatch();
 
-            // separate the results with newline|newline
-            if (results.Success)
-            {
-                sb.Append(matchDelimiter.Value);
-            }
+            // separate the results with matchDelimiter
+            if (results.Success) sb.Append(matchDelimiter.Value);
         }
 
         return new SqlString(sb.ToString());
-
     }
 
     /// <summary>
-    /// Returns the matching string. Only the nth match is returned
+    /// Returns the matching string. Only the nth match is returned. If there are no matches (or fewer than
+    /// the requested index), an empty string is returned.
     /// </summary>
     /// <param name="input">The string to search for a match.</param>
-    /// <param name="pattern">The regular expression pattern to match. </param>
-    /// <param name="matchIndex">The index of the result to return</param>
-    /// <returns>The matching string (only the nth result)</returns>
-    [SqlFunction]
+    /// <param name="pattern">The regular expression pattern to match.</param>
+    /// <param name="matchIndex">The zero-based index of the result to return.</param>
+    /// <returns>The nth matching string.</returns>
+    [SqlFunction(IsDeterministic = true)]
     public static SqlString RegexSelectOne(SqlChars input, SqlString pattern, SqlInt32 matchIndex)
     {
-        Regex regex = new Regex(pattern.Value, Options);
-        Match results = regex.Match(new string(input.Value));
-
-        string resultStr = "";
-        int index = 0;
+        var results = new Regex(pattern.Value, Options).Match(new string(input.Value));
+        var resultStr = "";
+        var index = 0;
 
         while (results.Success)
         {
             if (index == matchIndex)
             {
-                resultStr = results.Value.ToString();
+                resultStr = results.Value;
+                break;
             }
 
             results = results.NextMatch();
             index++;
-
         }
 
         return new SqlString(resultStr);
-
     }
-
-};
-
+}
