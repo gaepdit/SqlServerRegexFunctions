@@ -10,25 +10,24 @@ param
 
 $stringBuilder = New-Object -Type System.Text.StringBuilder
 
-$stringBuilder.Append("IF EXISTS (SELECT name FROM sys.assemblies WHERE name = '") > $null
-$stringBuilder.Append($assemblyName) > $null
-$stringBuilder.Append("')") > $null
+$stringBuilder.Append("-- Turn on advanced options.
+exec sp_configure 'show advanced options', '1';
+reconfigure;
+go
 
-$stringBuilder.Append("`n") > $null
-$stringBuilder.Append("    DROP ASSEMBLY [") > $null
-$stringBuilder.Append($assemblyName) > $null
-$stringBuilder.Append("]") > $null
+-- Turn off CLR strict security.
+exec sp_configure 'clr strict security', '0';
+reconfigure;
+go
 
-$stringBuilder.Append("`n") > $null
-$stringBuilder.Append("go") > $null
+-- Add the assembly.
+") > $null
 
-$stringBuilder.Append("`n") > $null
-$stringBuilder.Append("`n") > $null
 $stringBuilder.Append("CREATE ASSEMBLY [") > $null
 $stringBuilder.Append($assemblyName) > $null
-$stringBuilder.Append("] FROM ") > $null
+$stringBuilder.Append("] FROM 
+") > $null
 
-$stringBuilder.Append("`n") > $null
 $stringBuilder.Append("0x") > $null
 
 $assemblyFile = resolve-path $assemblyFile
@@ -38,22 +37,45 @@ while (($byte = $fileStream.ReadByte()) -gt -1) {
     $stringBuilder.Append($byte.ToString("X2")) > $null
 }
 
-$stringBuilder.Append("`n") > $null
-$stringBuilder.Append("WITH PERMISSION_SET = SAFE;") > $null
-$stringBuilder.Append("`n") > $null
+$stringBuilder.Append("
+WITH PERMISSION_SET = SAFE;
+
+-- Trust the assembly.
+") > $null
 
 $fileHash = Get-FileHash $assemblyFile SHA512
 
-$stringBuilder.Append("`n") > $null
-$stringBuilder.Append("exec sp_add_trusted_assembly") > $null
-$stringBuilder.Append("`n") > $null
-$stringBuilder.Append("0x") > $null
+$stringBuilder.Append("exec sp_add_trusted_assembly
+0x") > $null
 $stringBuilder.Append($fileHash.Hash) > $null
-$stringBuilder.Append("`n") > $null
-$stringBuilder.Append(", N'regexfunctions, version=0.0.0.0, culture=neutral, publickeytoken=null, processorarchitecture=msil';")
+$stringBuilder.Append("
+, N'regexfunctions, version=0.0.0.0, culture=neutral, publickeytoken=null, processorarchitecture=msil';
+") > $null
+
+$stringBuilder.Append("
+-- Enable executing CLR assembly.
+exec sp_configure 'clr enabled', '1';
+reconfigure;
+go
+
+-- Turn on CLR strict security.
+exec sp_configure 'clr strict security', '1';
+reconfigure;
+go
+
+-- Check current value of CLR strict security.
+exec sp_configure 'clr strict security';
+
+-- Turn off advanced options.
+exec sp_configure 'show advanced options', '0';
+reconfigure;
+go
+
+-- Check for existence of assembly.
+select * from sys.assemblies where name = '") > $null
+$stringBuilder.Append($assemblyName) > $null
+$stringBuilder.Append("';")
 
 $stringBuilder.ToString() > $out;
 $fileStream.Close()
 $fileStream.Dispose()
-
-
