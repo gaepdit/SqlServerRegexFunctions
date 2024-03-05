@@ -63,9 +63,6 @@ exec sp_configure 'clr strict security', '1';
 reconfigure;
 go
 
--- Check current value of CLR strict security.
-exec sp_configure 'clr strict security';
-
 -- Turn off advanced options.
 exec sp_configure 'show advanced options', '0';
 reconfigure;

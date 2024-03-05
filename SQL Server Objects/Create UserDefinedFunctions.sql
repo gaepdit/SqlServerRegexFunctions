@@ -19,8 +19,7 @@ IF OBJECT_ID('dbo.RegexReplace') IS NOT NULL
     DROP FUNCTION dbo.RegexReplace;
 GO
 
-CREATE FUNCTION dbo.RegexReplace(@expression nvarchar(max), @pattern nvarchar(max), @replace nvarchar(max)
-)
+CREATE FUNCTION dbo.RegexReplace(@expression nvarchar(max), @pattern nvarchar(max), @replace nvarchar(max))
     RETURNS nvarchar(max)
     WITH EXECUTE AS CALLER ,
         RETURNS NULL ON NULL INPUT
@@ -32,8 +31,7 @@ IF OBJECT_ID('dbo.RegexSelectAll') IS NOT NULL
     DROP FUNCTION dbo.RegexSelectAll;
 GO
 
-CREATE FUNCTION dbo.RegexSelectAll(@input nvarchar(max), @pattern nvarchar(max), @matchDelimiter nvarchar(max)
-)
+CREATE FUNCTION dbo.RegexSelectAll(@input nvarchar(max), @pattern nvarchar(max), @matchDelimiter nvarchar(max))
     RETURNS nvarchar(max)
     WITH EXECUTE AS CALLER ,
         RETURNS NULL ON NULL INPUT
